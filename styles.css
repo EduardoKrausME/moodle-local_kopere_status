@@ -1,0 +1,117 @@
+@charset "UTF-8";
+/* StatusBoard — minimal, bright (no dark) */
+.sb-container {
+  max-width: 880px;
+  margin: 24px auto;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.sb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sb-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sb-overall {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sb-operational {
+  background: #e8f7ec;
+  color: #1f7a38;
+}
+
+.sb-partial {
+  background: #fff5e6;
+  color: #9a5b00;
+}
+
+.sb-down {
+  background: #fee9ea;
+  color: #a52126;
+}
+
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.sb-card {
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.sb-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sb-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d3d3d3;
+}
+
+.sb-dot.up {
+  background: #2ecc71;
+}
+
+.sb-dot.down {
+  background: #e74c3c;
+}
+
+.sb-metric {
+  margin: 6px 0 2px;
+  font-size: 1.2rem;
+}
+
+.sb-sub {
+  margin: 0 0 6px;
+  color: #666666;
+}
+
+.sb-msg {
+  margin: 0 0 6px;
+  color: #444444;
+}
+
+.sb-time {
+  margin: 0;
+  color: #888888;
+  font-size: 0.9rem;
+}
+
+.sb-foot {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.sb-json {
+  font-size: 0.9rem;
+  color: #444444;
+  text-decoration: underline;
+}
+
+@media (max-width: 680px) {
+  .sb-grid {
+    grid-template-columns: 1fr;
+  }
+}
