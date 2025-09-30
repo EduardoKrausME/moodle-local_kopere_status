@@ -34,7 +34,7 @@ use Exception;
  *   - Compute expected sample "buckets" using intervalminutes.
  *   - For each bucket, mark OK if (at least one HTTP UP) AND (at least one DB UP) in that bucket.
  *   - Missing buckets => DOWN (covers periods when Moodle/server/db were OFF).
- *   - Store one row per hour in local_statusboard_hourly (upsert).
+ *   - Store one row per hour in local_kopere_status_hourly (upsert).
  * - After processing, delete raw logs for hours already rolled-up (keep only current hour).
  * - Purge hourly rollups older than retentiondays.
  */
@@ -138,8 +138,8 @@ class hourly_rollup_task extends \core\task\scheduled_task {
 
         $uptime = round(($okcount / $expected) * 100, 2);
 
-        // Upsert into local_statusboard_hourly.
-        $existing = $DB->get_record('local_statusboard_hourly', ['hourstart' => $hourstart], '*', IGNORE_MISSING);
+        // Upsert into local_kopere_status_hourly.
+        $existing = $DB->get_record('local_kopere_status_hourly', ['hourstart' => $hourstart], '*', IGNORE_MISSING);
 
         $row = new \stdClass();
         $row->hourstart = $hourstart;
@@ -150,10 +150,10 @@ class hourly_rollup_task extends \core\task\scheduled_task {
 
         if ($existing) {
             $row->id = $existing->id;
-            $DB->update_record('local_statusboard_hourly', $row);
+            $DB->update_record('local_kopere_status_hourly', $row);
         } else {
             $row->timecreated = $row->timemodified;
-            $DB->insert_record('local_statusboard_hourly', $row);
+            $DB->insert_record('local_kopere_status_hourly', $row);
         }
 
         mtrace("local_statusboard: rollup {$hourstart} => {$uptime}% ({$okcount}/{$expected})");
@@ -186,7 +186,7 @@ class hourly_rollup_task extends \core\task\scheduled_task {
         // Align cut to hour start for consistency (optional).
         $cut = (int) floor($cut / 3600) * 3600;
 
-        $deleted = $DB->delete_records_select('local_statusboard_hourly', 'hourstart < :cut', ['cut' => $cut]);
+        $deleted = $DB->delete_records_select('local_kopere_status_hourly', 'hourstart < :cut', ['cut' => $cut]);
         mtrace("local_statusboard: purged hourly rollups < {$cut} (deleted={$deleted})");
     }
 }

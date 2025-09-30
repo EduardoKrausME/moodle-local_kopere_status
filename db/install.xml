@@ -14,7 +14,7 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="local_statusboard_hourly" COMMENT="Per-hour uptime rollup">
+        <TABLE NAME="local_kopere_status_hourly" COMMENT="Per-hour uptime rollup">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="hourstart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>

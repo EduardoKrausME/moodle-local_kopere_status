@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * phpcs:disable moodle.Files.RequireLogin.Missing
  * Status public page.
  *
  * @package   local_kopere_status

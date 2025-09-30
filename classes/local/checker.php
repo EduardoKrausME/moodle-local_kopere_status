@@ -92,7 +92,7 @@ class checker {
         global $DB;
 
         $intervalmin = max(1, (int) get_config('local_statusboard', 'intervalminutes'));
-        $freshcut = time() - (2 * $intervalmin * 60); // anything older than this is considered stale.
+        $freshcut = time() - (2 * $intervalmin * 60); // Anything older than this is considered stale.
 
         $out = [];
 
@@ -119,8 +119,8 @@ class checker {
             // No raw sample available (e.g., logs already rolled-up or system was OFF).
             // Synthesize a stale/down sample to reflect unavailability in the UI.
             $out[$type] = [
-                'id' => 0, 'timecreated' => (int) floor(time() / 3600) * 3600, // current hour boundary (approx)
-                'type' => $type, 'status' => 0,           // DOWN if we have no evidence of UP
+                'id' => 0, 'timecreated' => (int) floor(time() / 3600) * 3600, // Current hour boundary (approx).
+                'type' => $type, 'status' => 0,           // DOWN if we have no evidence of UP.
                 'latencyms' => 0, 'httpcode' => 0, 'message' => 'no recent samples', 'fresh' => 0, 'stale' => 1,
             ];
         }
