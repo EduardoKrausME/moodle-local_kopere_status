@@ -4,30 +4,31 @@
         <TABLE NAME="local_kopere_status_log" COMMENT="Status check logs">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Unix time"/>
+                <FIELD NAME="minute" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="hour" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="day" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="month" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="year" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
                 <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="0=down,1=up"/>
                 <FIELD NAME="latencyms" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
                 <FIELD NAME="httpcode" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-                <FIELD NAME="message" TYPE="text" NOTNULL="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="uniq_minute" TYPE="unique" FIELDS="minute,hour,day,month,year" />
             </KEYS>
         </TABLE>
         <TABLE NAME="local_kopere_status_hourly" COMMENT="Per-hour uptime rollup">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="hourstart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-                <FIELD NAME="samplesexpected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-                <FIELD NAME="samplesok" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-                <FIELD NAME="uptime" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="true" DEFAULT="0.00"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="hour" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="day" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="month" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="year" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="uptime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-                <KEY NAME="uniq_hour" TYPE="unique" FIELDS="hourstart"/>
-                <KEY NAME="idx_hour" TYPE="index" FIELDS="hourstart"/>
             </KEYS>
         </TABLE>
     </TABLES>

@@ -22,61 +22,58 @@
         "title": "Report name"
     }
 }}
+
 <div class="sb-container">
     <header class="sb-header">
-        <h1 class="sb-title">{{title}}</h1>
-        <span class="sb-overall sb-{{overall}}">{{overall_label}}</span>
+        <h1 class="sb-title">{{{title}}}</h1>
+        <span class="sb-overall sb-{{{overall}}}">{{{overall_label}}}</span>
     </header>
 
-    <section class="sb-grid">
-        <div class="sb-card">
-            <div class="sb-card-head">
-                <span class="sb-dot {{#http}}up{{/http}}{{^http}}down{{/http}}"></span>
-                <h3>{{#str}}component_http, local_kopere_status{{/str}}</h3>
-            </div>
-            {{#sample_http}}
-                <p class="sb-metric"><strong>{{latencyms}} ms</strong></p>
-                <p class="sb-sub">
-                    {{#status}}
-                        {{#str}}up, local_kopere_status{{/str}}
-                    {{/status}}
-                    {{^status}}
-                        {{#str}}down, local_kopere_status{{/str}}
-                    {{/status}}
-                    · {{#httpcode}}HTTP {{httpcode}}{{/httpcode}}</p>
-                <p class="sb-msg">{{message}}</p>
-                <p class="sb-time">{{#str}}lastcheck, local_kopere_status{{/str}}: {{timecreated}}</p>
-            {{/sample_http}}
-            {{^sample_http}}
-                <p class="sb-sub">{{#str}}nodata, local_kopere_status{{/str}}</p>
-            {{/sample_http}}
-        </div>
+    <section>
+        {{#statusmodules}}
+            <div class="sb-card">
+                <div class="sb-card-head">
+                    <span class="sb-dot {{#http}}up{{/http}}{{^http}}down{{/http}}"></span>
+                    <h3>{{{name}}}</h3>
+                </div>
+                <div class="sb-card-head">
+                    <div class="sb-head-right">
+                        {{#status.uptime24h}}
+                            <div class="sb-uptimevalue">{{.}}%</div>
+                            <div class="sb-uptimelabel">{{#str}}uptime, local_kopere_status{{/str}}</div>
+                        {{/status.uptime24h}}
+                        {{^status.uptime24h}}
+                            <div class="sb-uptimevalue">—</div>
+                            <div class="sb-uptimelabel">{{#str}}uptime, local_kopere_status{{/str}}</div>
+                        {{/status.uptime24h}}
+                    </div>
+                </div>
+                <div class="sb-hoursline" role="list" aria-label="Últimas horas">
+                    {{#status.hours}}
+                        <span class="sb-hourbar {{cls}}" role="listitem" title="{{title}}" aria-label="{{title}}"></span>
+                    {{/status.hours}}
+                </div>
 
-        <div class="sb-card">
-            <div class="sb-card-head">
-                <span class="sb-dot {{#db}}up{{/db}}{{^db}}down{{/db}}"></span>
-                <h3>{{#str}}component_db, local_kopere_status{{/str}}</h3>
+                {{#sample_http}}
+                    <p class="sb-metric"><strong>{{{latencyms}}} ms</strong></p>
+                    <p class="sb-sub">
+                        {{#status}}
+                            {{#str}}up, local_kopere_status{{/str}}
+                        {{/status}}
+                        {{^status}}
+                            {{#str}}down, local_kopere_status{{/str}}
+                        {{/status}}
+                        ·
+                        {{#httpcode}}
+                            HTTP {{{httpcode}}}
+                        {{/httpcode}}
+                    </p>
+                    <p class="sb-time">{{#str}}lastcheck, local_kopere_status{{/str}}: {{{timecreated}}}</p>
+                {{/sample_http}}
+                {{^sample_http}}
+                    <p class="sb-sub">{{#str}}nodata, local_kopere_status{{/str}}</p>
+                {{/sample_http}}
             </div>
-            {{#sample_db}}
-                <p class="sb-metric"><strong>{{latencyms}} ms</strong></p>
-                <p class="sb-sub">
-                    {{#status}}
-                        {{#str}}up, local_kopere_status{{/str}}
-                    {{/status}}
-                    {{^status}}
-                        {{#str}}down, local_kopere_status{{/str}}
-                    {{/status}}</p>
-                <p class="sb-msg">{{message}}</p>
-                <p class="sb-time">{{#str}}lastcheck, local_kopere_status{{/str}}: {{timecreated}}</p>
-            {{/sample_db}}
-            {{^sample_db}}
-                <p class="sb-sub">{{#str}}nodata, local_kopere_status{{/str}}</p>
-            {{/sample_db}}
-        </div>
+        {{/statusmodules}}
     </section>
-
-    <footer class="sb-foot">
-        <a class="sb-json" href="{{jsonurl}}" target="_blank" rel="noopener">
-            {{#str}}viewjson, local_kopere_status{{/str}}</a>
-    </footer>
 </div>

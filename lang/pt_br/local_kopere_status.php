@@ -15,30 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Pt BR file.
+ * BR lang file.
  *
  * @package   local_kopere_status
  * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['component_db'] = 'Banco de Dados';
-$string['component_http'] = 'Aplicação HTTP';
-$string['down'] = 'Offline';
-$string['enabled'] = 'Ativado';
-$string['enabled_desc'] = 'Ativa/desativa todas as verificações e a página pública.';
-$string['healthtoken'] = 'Token de saúde (opcional)';
-$string['healthtoken_desc'] = 'Se definido, o endpoint /local/kopere_status/health.php requer &token=...';
-$string['intervalminutes'] = 'Intervalo de checagem (minutos)';
-$string['intervalminutes_desc'] = 'Tempo mínimo entre os ciclos de checagem. A tarefa agendada será controlada por este valor.';
-$string['lastcheck'] = 'Última checagem';
-$string['nodata'] = 'Ainda sem dados';
-$string['overall_down'] = 'Grande indisponibilidade';
+$string['down'] = 'Fora do ar';
+$string['intervalminutes'] = 'Intervalo de verificação (minutos)';
+$string['intervalminutes_desc'] = 'Tempo mínimo entre ciclos de verificação. A tarefa agendada será controlada por este valor.';
+$string['lastcheck'] = 'Última verificação';
+$string['modules'] = 'Módulos';
+$string['modules_desc'] = 'Descrição dos módulos';
+$string['nodata'] = 'Nenhum dado ainda';
 $string['overall_operational'] = 'Todos os sistemas operacionais';
-$string['overall_partial'] = 'Indisponibilidade parcial';
-$string['pluginname'] = 'Painel de Status';
+$string['pluginname'] = 'Status do Sistema';
 $string['publictitle'] = 'Título público';
 $string['publictitle_desc'] = 'Título exibido na página pública de status.';
-$string['up'] = 'Online';
-$string['viewjson'] = 'Ver JSON';
-
+$string['retentiondays'] = 'Retenção (dias)';
+$string['retentiondays_desc'] = 'Excluir registros agregados por hora mais antigos que este número de dias. Os logs brutos também são excluídos após cada agregação (mantendo apenas a hora atual para a próxima agregação).';
+$string['task_hourly_rollup'] = 'Agregação e limpeza horária do StatusBoard';
+$string['up'] = 'No ar';
+$string['uptime'] = 'Tempo em atividade';

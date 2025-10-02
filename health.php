@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * phpcs:disable moodle.Files.RequireLogin.Missing
+ * phpcs:disable
  *
  * Public, lightweight health endpoint. Includes DB check.
  *
@@ -24,7 +24,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$t0 = microtime(true);
+
 define('NO_MOODLE_COOKIES', true);
 require(__DIR__ . "/../../config.php");
 
-die("OK");
+header("Content-Type: application/json");
+echo json_encode([
+    "ok" => true,
+    "latency" => round((microtime(true) - $t0) * 1000),
+], JSON_UNESCAPED_SLASHES);
+

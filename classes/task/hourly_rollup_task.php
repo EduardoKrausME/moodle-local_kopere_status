@@ -22,171 +22,105 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_statusboard\task;
+namespace local_kopere_status\task;
 
+use core\task\scheduled_task;
 use Exception;
 
 /**
- * Build per-hour uptime rollups for the last 24h and purge raw/old data.
- *
- * Strategy:
- * - For each fully elapsed hour in the last 24h:
- *   - Compute expected sample "buckets" using intervalminutes.
- *   - For each bucket, mark OK if (at least one HTTP UP) AND (at least one DB UP) in that bucket.
- *   - Missing buckets => DOWN (covers periods when Moodle/server/db were OFF).
- *   - Store one row per hour in local_kopere_status_hourly (upsert).
- * - After processing, delete raw logs for hours already rolled-up (keep only current hour).
- * - Purge hourly rollups older than retentiondays.
+ * Hourly rollup task.
  */
-class hourly_rollup_task extends \core\task\scheduled_task {
-
+class hourly_rollup_task extends scheduled_task {
     /**
-     * Get_name
+     * Get a descriptive name for the task (shown to admins)
      *
      * @return string
-     * @throws Exception
      */
     public function get_name(): string {
-        return get_string('task_hourly_rollup', 'local_statusboard');
+        return "Hourly rollup task";
     }
 
     /**
-     * execute
+     * Do the job.
+     * Throw exceptions on errors (the job will be retried).
      *
-     * @return void
      * @throws Exception
      */
-    public function execute(): void {
-        $enabled = (int) get_config('local_statusboard', 'enabled');
-        if (!$enabled) {
-            mtrace('local_statusboard: hourly rollup skipped (disabled).');
-            return;
+    public function execute() {
+        global $DB;
+
+        $interval = get_config("local_kopere_status", "intervalminutes");
+        if ($interval <= 0) {
+            $interval = 5;
         }
+        $expected = floor(60 / $interval); // Expected number of pings per hour.
 
-        $intervalmin = max(1, (int) get_config('local_statusboard', 'intervalminutes'));
-        $retentiondays = max(1, (int) get_config('local_statusboard', 'retentiondays'));
-
-        $intervalsec = $intervalmin * 60;
+        // Previous hour in UTC.
         $now = time();
-        $currenthourstart = (int) floor($now / 3600) * 3600;
+        $hourstart = $now - ($now % 3600) - 3600; // Start of previous hour.
+        $y = gmdate("Y", $hourstart);
+        $mo = gmdate("n", $hourstart);
+        $d = gmdate("j", $hourstart);
+        $h = gmdate("G", $hourstart);
 
-        // Process last 24 fully closed hours (exclude current hour).
-        $hours = [];
-        for ($h = 1; $h <= 24; $h++) {
-            $hours[] = $currenthourstart - ($h * 3600);
+        // Aggregate logs for that hour.
+        $sql = "SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS okcount
+                FROM {local_kopere_status_log}
+               WHERE year = :y AND month = :mo AND day = :d AND hour = :h";
+        $agg = $DB->get_record_sql($sql, ["y" => $y, "mo" => $mo, "d" => $d, "h" => $h]);
+
+        $okcount = ($agg->okcount ?? 0);
+
+        // Missing counts as downtime.
+        $effectiveok = $okcount; // Missing are not ok.
+        $uptime = 0;
+        if ($expected > 0) {
+            $uptime = round(($effectiveok / $expected) * 100);
         }
+        $uptime = max(0, min(100, $uptime));
 
-        foreach ($hours as $hourstart) {
-            $this->rollup_hour($hourstart, $intervalsec);
-        }
+        // Upsert into hourly table (unique by y/m/d/h if you add it; here we match manually).
+        $select = "year = :y AND month = :mo AND day = :d AND hour = :h";
+        $params = ["y" => $y, "mo" => $mo, "d" => $d, "h" => $h];
 
-        // Purge raw logs for hours already rolled-up (older than current hour).
-        $this->purge_raw_logs($currenthourstart);
-
-        // Purge hourly rollups older than retentiondays.
-        $this->purge_hourly_rollups($retentiondays);
-    }
-
-    /**
-     * Rollup hour
-     *
-     * @param int $hourstart
-     * @param int $intervalsec
-     * @return void
-     * @throws Exception
-     */
-    protected function rollup_hour(int $hourstart, int $intervalsec): void {
-        global $DB;
-
-        $hourend = $hourstart + 3600;
-        $expected = max(1, (int) floor(3600 / $intervalsec)); // E.g. 12 for 5min.
-
-        // Prepare bucket arrays.
-        $httpok = array_fill(0, $expected, false);
-        $dbok = array_fill(0, $expected, false);
-
-        // Fetch logs inside hour window.
-        $sql = "SELECT timecreated, type, status
-                  FROM {local_statusboard_log}
-                 WHERE timecreated >= :start AND timecreated < :end";
-        $params = ['start' => $hourstart, 'end' => $hourend];
-        $logs = $DB->get_records_sql($sql, $params);
-
-        foreach ($logs as $log) {
-            $offset = (int) $log->timecreated - $hourstart;
-            if ($offset < 0 || $offset >= 3600) {
-                continue;
-            }
-            $bucket = (int) floor($offset / $intervalsec);
-            if ($bucket < 0 || $bucket >= $expected) {
-                continue;
-            }
-            $isup = ((int) $log->status === 1);
-            if ($log->type === 'http') {
-                $httpok[$bucket] = $httpok[$bucket] || $isup;
-            } else if ($log->type === 'db') {
-                $dbok[$bucket] = $dbok[$bucket] || $isup;
-            }
-        }
-
-        $okcount = 0;
-        for ($i = 0; $i < $expected; $i++) {
-            if ($httpok[$i] && $dbok[$i]) {
-                $okcount++;
-            }
-        }
-
-        $uptime = round(($okcount / $expected) * 100, 2);
-
-        // Upsert into local_kopere_status_hourly.
-        $existing = $DB->get_record('local_kopere_status_hourly', ['hourstart' => $hourstart], '*', IGNORE_MISSING);
-
-        $row = new \stdClass();
-        $row->hourstart = $hourstart;
-        $row->samplesexpected = $expected;
-        $row->samplesok = $okcount;
-        $row->uptime = $uptime;
-        $row->timemodified = time();
-
-        if ($existing) {
-            $row->id = $existing->id;
-            $DB->update_record('local_kopere_status_hourly', $row);
+        if ($row = $DB->get_record_select("local_kopere_status_hourly", $select, $params, "id")) {
+            $row->uptime = $uptime;
+            $DB->update_record("local_kopere_status_hourly", $row);
         } else {
-            $row->timecreated = $row->timemodified;
-            $DB->insert_record('local_kopere_status_hourly', $row);
+            $row = (object) [
+                "year" => $y,
+                "month" => $mo,
+                "day" => $d,
+                "hour" => $h,
+                "uptime" => $uptime,
+            ];
+            $DB->insert_record("local_kopere_status_hourly", $row);
         }
 
-        mtrace("local_statusboard: rollup {$hourstart} => {$uptime}% ({$okcount}/{$expected})");
-    }
+        // Retention (days) – prune old logs and old rollups by day cutoff (UTC).
+        $retentiondays = get_config("local_kopere_status", "retentiondays");
+        if ($retentiondays <= 0) {
+            $retentiondays = 30;
+        }
+        $cut = strtotime("-" . $retentiondays . " days", $now);
+        $cy = gmdate("Y", $cut);
+        $cmo = gmdate("n", $cut);
+        $cd = gmdate("j", $cut);
 
-    /**
-     * Purge logs
-     *
-     * @param int $currenthourstart
-     * @return void
-     * @throws Exception
-     */
-    protected function purge_raw_logs(int $currenthourstart): void {
-        global $DB;
-        // Remove raw logs older than the start of the current hour (i.e., all that we could have rolled up).
-        $deleted = $DB->delete_records_select('local_statusboard_log', 'timecreated < :cut', ['cut' => $currenthourstart]);
-        mtrace("local_statusboard: purged raw logs <= " . ($currenthourstart - 1) . " (deleted={$deleted})");
-    }
+        // Delete logs older than cutoff day (coarse, but cross-DB compatible).
+        $DB->delete_records_select("local_kopere_status_log",
+            "(year < :cy)
+              OR (year = :cy AND month < :cmo)
+              OR (year = :cy AND month = :cmo AND day < :cd)",
+            ["cy" => $cy, "cmo" => $cmo, "cd" => $cd]);
 
-    /**
-     * Purge rollups
-     *
-     * @param int $retentiondays
-     * @return void
-     * @throws Exception
-     */
-    protected function purge_hourly_rollups(int $retentiondays): void {
-        global $DB;
-        $cut = time() - ($retentiondays * 86400);
-        // Align cut to hour start for consistency (optional).
-        $cut = (int) floor($cut / 3600) * 3600;
-
-        $deleted = $DB->delete_records_select('local_kopere_status_hourly', 'hourstart < :cut', ['cut' => $cut]);
-        mtrace("local_statusboard: purged hourly rollups < {$cut} (deleted={$deleted})");
+        // Delete hourly older than cutoff day too.
+        $DB->delete_records_select("local_kopere_status_hourly",
+            "(year < :cy)
+              OR (year = :cy AND month < :cmo)
+              OR (year = :cy AND month = :cmo AND day < :cd)",
+            ["cy" => $cy, "cmo" => $cmo, "cd" => $cd]);
     }
 }

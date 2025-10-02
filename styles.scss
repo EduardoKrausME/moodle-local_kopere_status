@@ -1,9 +1,8 @@
 /* StatusBoard — minimal, bright (no dark) */
 .sb-container {
-    max-width: 880px;
+    max-width: 1100px;
     margin: 24px auto;
     padding: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 .sb-header {
     display: flex;
@@ -33,11 +32,6 @@
 .sb-down {
     background: #fee9ea;
     color: #a52126;
-}
-.sb-grid {
-    display: grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap: 14px;
 }
 .sb-card {
     border: 1px solid #e7e7e7;
@@ -90,8 +84,120 @@
     color: #444444;
     text-decoration: underline;
 }
-@media (max-width: 680px) {
-    .sb-grid {
-        grid-template-columns:1fr;
+
+
+/* ===== Status card (hour-by-hour) ===== */
+.sb-card {
+    border: 1px solid #e7e7e7;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 12px 0;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
+    .sb-card-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .sb-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .sb-head-right {
+        text-align: right;
+        min-width: 80px;
+    }
+    .sb-stateicon {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-block;
+        flex: 0 0 auto;
+        position: relative;
+    }
+    .sb-stateicon.operational {
+        background: #27ae60;
+    }
+    .sb-stateicon.partial {
+        background: #f1c40f;
+    }
+    .sb-stateicon.down {
+        background: #e74c3c;
+    }
+    .sb-titlewrap {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+    .sb-servicename {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    .sb-servicestate {
+        font-size: .85rem;
+    }
+    .sb-servicestate.operational {
+        color: #27ae60;
+    }
+    .sb-servicestate.partial {
+        color: #ad7a00;
+    }
+    .sb-servicestate.down {
+        color: #b3261e;
+    }
+    .sb-uptimevalue {
+        font-weight: 700;
+        color: #111827;
+    }
+    .sb-uptimelabel {
+        font-size: .75rem;
+        color: #6b7280;
+        margin-top: -2px;
+    }
+    .sb-hoursline {
+        display: flex;
+        gap: 2px;
+    }
+    .sb-hourbar {
+        display: inline-block;
+        width: 100%;
+        height: 22px;
+        border-radius: 4px;
+        background: #e5e7eb;
+    }
+    /* Paleta de estados (ajuste se quiser) */
+    .sb-hourbar.ok {
+        background: #2ecc71;
+    }
+    /* 100–99% */
+    .sb-hourbar.good {
+        background: #7bd98c;
+    }
+    /* 98–95%  */
+    .sb-hourbar.warn {
+        background: #f1c40f;
+    }
+    /* 94–80%  */
+    .sb-hourbar.bad {
+        background: #f39c12;
+    }
+    /* 79–1%   */
+    .sb-hourbar.down {
+        background: #e74c3c;
+    }
+    /* 0%      */
+    .sb-hourbar.nodata {
+        background: #cdd5df;
+    }
+    /* sem dado explícito */
+    /* Responsivo: barras um pouco mais estreitas em telas menores */
+    @media (max-width: 680px) {
+        .sb-hourbar {
+            width: 5px;
+            height: 18px;
+        }
     }
 }

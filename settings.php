@@ -25,50 +25,42 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_kopere_status',
-        get_string('pluginname', 'local_kopere_status'));
-
-    // Enable.
-    $settings->add(new admin_setting_configcheckbox(
-        'local_kopere_status/enabled',
-        get_string('enabled', 'local_kopere_status'),
-        get_string('enabled_desc', 'local_kopere_status'),
-        1
-    ));
+    $settings = new admin_settingpage("local_kopere_status",
+        get_string("pluginname", "local_kopere_status"));
 
     // Ping interval (minutes).
     $settings->add(new admin_setting_configtext(
-        'local_kopere_status/intervalminutes',
-        get_string('intervalminutes', 'local_kopere_status'),
-        get_string('intervalminutes_desc', 'local_kopere_status'),
+        "local_kopere_status/intervalminutes",
+        get_string("intervalminutes", "local_kopere_status"),
+        get_string("intervalminutes_desc", "local_kopere_status"),
         5,
         PARAM_INT
     ));
 
-    // Optional token to protect health endpoint.
-    $settings->add(new admin_setting_configtext(
-        'local_kopere_status/healthtoken',
-        get_string('healthtoken', 'local_kopere_status'),
-        get_string('healthtoken_desc', 'local_kopere_status'),
-        ''
-    ));
-
-    // Title shown on public page.
-    $settings->add(new admin_setting_configtext(
-        'local_kopere_status/publictitle',
-        get_string('publictitle', 'local_kopere_status'),
-        get_string('publictitle_desc', 'local_kopere_status'),
-        'System Status'
-    ));
-
     // Retention (days) for hourly rollups (and general cleanup).
     $settings->add(new admin_setting_configtext(
-        'local_statusboard/retentiondays',
-        get_string('retentiondays', 'local_statusboard'),
-        get_string('retentiondays_desc', 'local_statusboard'),
+        "local_kopere_status/retentiondays",
+        get_string("retentiondays", "local_kopere_status"),
+        get_string("retentiondays_desc", "local_kopere_status"),
         30,
         PARAM_INT
     ));
 
-    $ADMIN->add('localplugins', $settings);
+    // Title shown on public page.
+    $settings->add(new admin_setting_configtext(
+        "local_kopere_status/publictitle",
+        get_string("publictitle", "local_kopere_status"),
+        get_string("publictitle_desc", "local_kopere_status"),
+        "System Status"
+    ));
+
+    // Title shown on public page.
+    $settings->add(new admin_setting_configtextarea(
+        "local_kopere_status/modules",
+        get_string("modules", "local_kopere_status"),
+        get_string("modules_desc", "local_kopere_status"),
+        ""
+    ));
+
+    $ADMIN->add("localplugins", $settings);
 }
