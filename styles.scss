@@ -1,203 +1,221 @@
-/* StatusBoard — minimal, bright (no dark) */
-.sb-container {
-    max-width: 1100px;
-    margin: 24px auto;
-    padding: 16px;
-}
-.sb-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-.sb-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-}
-.sb-overall {
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: .9rem;
-    font-weight: 600;
-}
-.sb-operational {
-    background: #e8f7ec;
-    color: #1f7a38;
-}
-.sb-partial {
-    background: #fff5e6;
-    color: #9a5b00;
-}
-.sb-down {
-    background: #fee9ea;
-    color: #a52126;
-}
-.sb-card {
-    border: 1px solid #e7e7e7;
-    border-radius: 12px;
-    padding: 14px;
-    background: #ffffff;
-}
-.sb-card-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-.sb-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #d3d3d3;
-}
-.sb-dot.up {
-    background: #2ecc71;
-}
-.sb-dot.down {
-    background: #e74c3c;
-}
-.sb-metric {
-    margin: 6px 0 2px;
-    font-size: 1.2rem;
-}
-.sb-sub {
-    margin: 0 0 6px;
-    color: #666666;
-}
-.sb-msg {
-    margin: 0 0 6px;
-    color: #444444;
-}
-.sb-time {
-    margin: 0;
-    color: #888888;
-    font-size: .9rem;
-}
-.sb-foot {
-    margin-top: 16px;
-    text-align: right;
-}
-.sb-json {
-    font-size: .9rem;
-    color: #444444;
-    text-decoration: underline;
-}
-
-
-/* ===== Status card (hour-by-hour) ===== */
-.sb-card {
-    border: 1px solid #e7e7e7;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 14px;
-    margin: 12px 0;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
-    .sb-card-head {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
+#page-local-kopere_status-index {
+    // StatusBoard — minimal, bright (no dark)
+    .sb-container {
+        max-width: 1100px;
+        margin: 24px auto;
+        padding: 16px;
+        .sb-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            .sb-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+            }
+            .sb-overall {
+                padding: 6px 10px;
+                border-radius: 999px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                &.sb-operational {
+                    background: #e8f7ec;
+                    color: #1f7a38;
+                }
+                &.sb-partial {
+                    background: #fff5e6;
+                    color: #9a5b00;
+                }
+                &.sb-down {
+                    background: #fee9ea;
+                    color: #a52126;
+                }
+            }
+        }
+        section {
+            // espaço reservado caso queira regras específicas do <section>
+        }
     }
-    .sb-head-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .sb-head-right {
-        text-align: right;
-        min-width: 80px;
-    }
-    .sb-stateicon {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: inline-block;
-        flex: 0 0 auto;
-        position: relative;
-    }
-    .sb-stateicon.operational {
-        background: #27ae60;
-    }
-    .sb-stateicon.partial {
-        background: #f1c40f;
-    }
-    .sb-stateicon.down {
-        background: #e74c3c;
-    }
-    .sb-titlewrap {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.1;
-    }
-    .sb-servicename {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #1f2937;
-    }
-    .sb-servicestate {
-        font-size: .85rem;
-    }
-    .sb-servicestate.operational {
-        color: #27ae60;
-    }
-    .sb-servicestate.partial {
-        color: #ad7a00;
-    }
-    .sb-servicestate.down {
-        color: #b3261e;
-    }
-    .sb-uptimevalue {
-        font-weight: 700;
-        color: #111827;
-    }
-    .sb-uptimelabel {
-        font-size: .75rem;
-        color: #6b7280;
-        margin-top: -2px;
-    }
-    .sb-hoursline {
-        display: flex;
-        gap: 2px;
-    }
-    .sb-hourbar {
-        display: inline-block;
-        width: 100%;
-        height: 22px;
-        border-radius: 4px;
-        background: #e5e7eb;
-    }
-    /* Paleta de estados (ajuste se quiser) */
-    .sb-hourbar.ok {
-        background: #2ecc71;
-    }
-    /* 100–99% */
-    .sb-hourbar.good {
-        background: #7bd98c;
-    }
-    /* 98–95%  */
-    .sb-hourbar.warn {
-        background: #f1c40f;
-    }
-    /* 94–80%  */
-    .sb-hourbar.bad {
-        background: #f39c12;
-    }
-    /* 79–1%   */
-    .sb-hourbar.down {
-        background: #e74c3c;
-    }
-    /* 0%      */
-    .sb-hourbar.nodata {
-        background: #cdd5df;
-    }
-    /* sem dado explícito */
-    /* Responsivo: barras um pouco mais estreitas em telas menores */
-    @media (max-width: 680px) {
-        .sb-hourbar {
-            width: 5px;
+    .sb-card {
+        border: 1px solid #e7e7e7;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 14px;
+        margin: 12px 0;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        .sb-card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .sb-head-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sb-stateicon {
+            width: 18px;
             height: 18px;
+            border-radius: 50%;
+            display: inline-block;
+            flex: 0 0 auto;
+            position: relative;
+            &.operational {
+                background: #27ae60;
+            }
+            &.partial {
+                background: #f1c40f;
+            }
+            &.down {
+                background: #e74c3c;
+            }
+        }
+        .sb-titlewrap {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .sb-servicename {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .sb-servicestate {
+            font-size: 0.85rem;
+            &.operational {
+                color: #27ae60;
+            }
+            &.partial {
+                color: #ad7a00;
+            }
+            &.down {
+                color: #b3261e;
+            }
+        }
+        .sb-uptimelabel {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: -2px;
+        }
+        .sb-hoursline {
+            display: flex;
+            gap: 2px;
+        }
+        .sb-hourbar {
+            display: inline-block;
+            width: 100%;
+            height: 22px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            /* 100 or 99% */
+            &.ok {
+                background: #2ecc71;
+            }
+            // 95 to 98%
+            &.good {
+                background: #7bd98c;
+            }
+            // 80 to 95%
+            &.warn {
+                background: #f1c40f;
+            }
+            // 1 to 80%
+            &.bad {
+                background: #f39c12;
+            }
+            // 0%
+            &.down {
+                background: #e74c3c;
+            }
+        }
+        @media (max-width: 680px) {
+            .sb-hourbar {
+                width: 5px;
+                height: 18px;
+            }
+        }
+    }
+    .sb-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d3d3d3;
+        &.up {
+            background: #2ecc71;
+        }
+        &.down {
+            background: #e74c3c;
+        }
+    }
+    .sb-metric {
+        margin: 6px 0 2px;
+        font-size: 1.2rem;
+        .sb-sub {
+            margin: 0;
+            color: #666666;
+        }
+        .sb-time {
+            margin: 0;
+            color: #888888;
+            font-size: 0.9rem;
+        }
+    }
+    .hoursline-modal {
+        position: absolute;
+        display: none;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        padding: 6px 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        z-index: 999;
+        font-size: 14px;
+        transform: translateX(-50%);
+        text-align: center;
+        .time {
+            display: block;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .pct {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            /* 100 or 99% */
+            &.ok {
+                background: #2ecc71;
+                color: #fff;
+                border-color: #27ae60;
+            }
+            /* 95 to 99% */
+            &.good {
+                background: #7bd98c;
+                color: #1b5e20;
+                border-color: #43a047;
+            }
+            /* 80 to 95% */
+            &.warn {
+                background: #f1c40f;
+                color: #7d6608;
+                border-color: #d4ac0d;
+            }
+            /* 1 to 80% */
+            &.bad {
+                background: #f39c12;
+                color: #873600;
+                border-color: #d35400;
+            }
+            /* 0% */
+            &.down {
+                background: #e74c3c;
+                color: #fff;
+                border-color: #c0392b;
+            }
         }
     }
 }

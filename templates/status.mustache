@@ -33,47 +33,67 @@
         {{#statusmodules}}
             <div class="sb-card">
                 <div class="sb-card-head">
-                    <span class="sb-dot {{#http}}up{{/http}}{{^http}}down{{/http}}"></span>
+                    <span class="sb-dot up"></span>
                     <h3>{{{name}}}</h3>
-                </div>
-                <div class="sb-card-head">
-                    <div class="sb-head-right">
-                        {{#status.uptime24h}}
-                            <div class="sb-uptimevalue">{{.}}%</div>
-                            <div class="sb-uptimelabel">{{#str}}uptime, local_kopere_status{{/str}}</div>
-                        {{/status.uptime24h}}
-                        {{^status.uptime24h}}
-                            <div class="sb-uptimevalue">—</div>
-                            <div class="sb-uptimelabel">{{#str}}uptime, local_kopere_status{{/str}}</div>
-                        {{/status.uptime24h}}
-                    </div>
                 </div>
                 <div class="sb-hoursline" role="list" aria-label="Últimas horas">
                     {{#status.hours}}
-                        <span class="sb-hourbar {{cls}}" role="listitem" title="{{title}}" aria-label="{{title}}"></span>
+                        <span class="sb-hourbar {{cls}}"
+                              title="{{{timecreated}}} - {{{pct}}}%"
+                              data-timecreated="{{{timecreated}}}"
+                              data-pct="{{{pct}}}"></span>
                     {{/status.hours}}
                 </div>
 
-                {{#sample_http}}
+                {{#last_log}}
                     <p class="sb-metric"><strong>{{{latencyms}}} ms</strong></p>
-                    <p class="sb-sub">
-                        {{#status}}
-                            {{#str}}up, local_kopere_status{{/str}}
-                        {{/status}}
-                        {{^status}}
-                            {{#str}}down, local_kopere_status{{/str}}
-                        {{/status}}
-                        ·
-                        {{#httpcode}}
-                            HTTP {{{httpcode}}}
-                        {{/httpcode}}
-                    </p>
-                    <p class="sb-time">{{#str}}lastcheck, local_kopere_status{{/str}}: {{{timecreated}}}</p>
-                {{/sample_http}}
-                {{^sample_http}}
+                    <div class="d-flex gap-3 align-items-center">
+                        <p class="sb-sub">
+                            {{#status}}
+                                {{#str}}up, local_kopere_status{{/str}}
+                            {{/status}}
+                            {{^status}}
+                                {{#str}}down, local_kopere_status{{/str}}
+                            {{/status}}
+                            ·
+                            {{#httpcode}}
+                                HTTP {{{httpcode}}}
+                            {{/httpcode}}
+                        </p>
+                        <p class="sb-time">{{#str}}lastcheck, local_kopere_status{{/str}}: {{{timecreated}}}</p>
+                    </div>
+                {{/last_log}}
+                {{^last_log}}
                     <p class="sb-sub">{{#str}}nodata, local_kopere_status{{/str}}</p>
-                {{/sample_http}}
+                {{/last_log}}
             </div>
         {{/statusmodules}}
     </section>
 </div>
+
+<!-- Modal -->
+<div class="hoursline-modal" id="hoursline-modal"></div>
+
+<script>
+    const spans = document.querySelectorAll(".sb-hoursline .sb-hourbar");
+    const modal = document.getElementById("hoursline-modal");
+
+    spans.forEach(span => {
+        span.addEventListener("mouseenter", () => {
+            const timecreated = span.getAttribute("data-timecreated");
+            const pct = span.getAttribute("data-pct");
+            const extraclass = span.getAttribute("class").replace("sb-hourbar");
+            modal.innerHTML = `<span class='time'>${timecreated}</span><span class="pct ${extraclass}">${pct}%<span>`;
+            modal.style.display = "block";
+
+            // posição acima do item
+            const rect = span.getBoundingClientRect();
+            modal.style.left = rect.left + window.scrollX + "px";
+            modal.style.top = rect.top + window.scrollY - modal.offsetHeight - 8 + "px"; // 8px de espaço
+        });
+
+        span.addEventListener("mouseleave", () => {
+            modal.style.display = "none";
+        });
+    });
+</script>

@@ -28,13 +28,45 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage("local_kopere_status",
         get_string("pluginname", "local_kopere_status"));
 
+    $choices = [
+        1  => get_string("minute", "local_kopere_status"),
+        2  => get_string("minutes", "local_kopere_status", 2),
+        3  => get_string("minutes", "local_kopere_status", 3),
+        4  => get_string("minutes", "local_kopere_status", 4),
+        5  => get_string("minutes", "local_kopere_status", 5),
+        6  => get_string("minutes", "local_kopere_status", 6),
+        10 => get_string("minutes", "local_kopere_status", 10),
+        12 => get_string("minutes", "local_kopere_status", 12),
+        15 => get_string("minutes", "local_kopere_status", 15),
+        20 => get_string("minutes", "local_kopere_status", 20),
+        30 => get_string("minutes", "local_kopere_status", 30),
+        59 => get_string("minutes", "local_kopere_status", 60),
+    ];
     // Ping interval (minutes).
-    $settings->add(new admin_setting_configtext(
+    $settings->add(new admin_setting_configselect(
         "local_kopere_status/intervalminutes",
         get_string("intervalminutes", "local_kopere_status"),
         get_string("intervalminutes_desc", "local_kopere_status"),
         5,
-        PARAM_INT
+        $choices
+    ));
+
+    $choices = [
+        1 => get_string("day", "local_kopere_status"),
+        2 => get_string("days", "local_kopere_status", 2),
+        3 => get_string("days", "local_kopere_status", 3),
+        4 => get_string("days", "local_kopere_status", 4),
+        5 => get_string("days", "local_kopere_status", 5),
+        6 => get_string("days", "local_kopere_status", 6),
+        7 => get_string("days", "local_kopere_status", 7),
+    ];
+    // Status page days.
+    $settings->add(new admin_setting_configselect(
+        "local_kopere_status/statuspagedays",
+        get_string("statuspagedays", "local_kopere_status"),
+        get_string("statuspagedays_desc", "local_kopere_status"),
+        5,
+        $choices
     ));
 
     // Retention (days) for hourly rollups (and general cleanup).
@@ -51,7 +83,7 @@ if ($hassiteconfig) {
         "local_kopere_status/publictitle",
         get_string("publictitle", "local_kopere_status"),
         get_string("publictitle_desc", "local_kopere_status"),
-        "System Status"
+        ""
     ));
 
     // Title shown on public page.

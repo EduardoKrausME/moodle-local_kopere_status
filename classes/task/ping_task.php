@@ -26,6 +26,7 @@ namespace local_kopere_status\task;
 
 use core\task\scheduled_task;
 use curl;
+use dml_write_exception;
 use Exception;
 use moodle_url;
 
@@ -61,17 +62,19 @@ class ping_task extends scheduled_task {
 
         // Only act on minutes that are multiples of the interval.
         $now = time();
-        $currentminute = gmdate("i", $now);
+        mtrace(date('c', $now));
+        $currentminute = date("i", $now);
         if ($interval > 1 && ($currentminute % $interval) !== 0) {
-            return;
+            //mtrace("Ignored");
+            //return;
         }
 
         // Build time components in UTC.
-        $minute = gmdate("i", $now);
-        $hour = gmdate("G", $now);
-        $day = gmdate("j", $now);
-        $month = gmdate("n", $now);
-        $year = gmdate("Y", $now);
+        $minute = date("i", $now);
+        $hour = date("G", $now);
+        $day = date("j", $now);
+        $month = date("n", $now);
+        $year = date("Y", $now);
 
         // Prepare request to our health endpoint.
         $url = new moodle_url("/local/kopere_status/health.php");
@@ -104,37 +107,20 @@ class ping_task extends scheduled_task {
 
         $status = $ok ? 1 : 0;
 
-        // Upsert by unique (minute,hour,day,month,year).
-        $select = "minute = :m AND hour = :h AND day = :d AND month = :mo AND year = :y";
-        $params = ["m" => $minute, "h" => $hour, "d" => $day, "mo" => $month, "y" => $year];
-
-        if ($existing = $DB->get_record_select("local_kopere_status_log", $select, $params, "id")) {
-            $existing->status = $status;
-            $existing->latencyms = $latencyms;
-            $existing->httpcode = $httpcode;
-            $DB->update_record("local_kopere_status_log", $existing);
-        } else {
-            $log = (object) [
-                "minute" => $minute,
-                "hour" => $hour,
-                "day" => $day,
-                "month" => $month,
-                "year" => $year,
-                "status" => $status,
-                "latencyms" => $latencyms,
-                "httpcode" => $httpcode,
-            ];
-            try {
-                $DB->insert_record("local_kopere_status_log", $log);
-            } catch (\dml_write_exception $e) {
-                // If another cron wrote the same minute, try to update instead.
-                if ($existing = $DB->get_record_select("local_kopere_status_log", $select, $params, "id")) {
-                    $existing->status = $status;
-                    $existing->latencyms = $latencyms;
-                    $existing->httpcode = $httpcode;
-                    $DB->update_record("local_kopere_status_log", $existing);
-                }
-            }
+        $log = (object) [
+            "minute" => $minute,
+            "hour" => $hour,
+            "day" => $day,
+            "month" => $month,
+            "year" => $year,
+            "status" => $status,
+            "latencyms" => $latencyms,
+            "httpcode" => $httpcode,
+        ];
+        try {
+            $DB->insert_record("local_kopere_status_log", $log);
+        } catch (Exception $e) {
+            mtrace($e->getMessage());
         }
     }
 }

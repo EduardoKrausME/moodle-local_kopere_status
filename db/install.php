@@ -39,10 +39,10 @@ function xmldb_local_kopere_status_install() {
     for ($i = $hours; $i >= 1; $i--) {
         $t = $now - ($now % 3600) - ($i * 3600);
         $rec = (object) [
-            "year" => gmdate("Y", $t),
-            "month" => gmdate("n", $t),
-            "day" => gmdate("j", $t),
-            "hour" => gmdate("G", $t),
+            "year" => date("Y", $t),
+            "month" => date("n", $t),
+            "day" => date("j", $t),
+            "hour" => date("G", $t),
             "uptime" => 100,
         ];
         $records[] = $rec;

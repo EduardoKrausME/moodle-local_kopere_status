@@ -22,10 +22,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['day'] = '1 dia';
+$string['days'] = '{$a} dias';
 $string['down'] = 'Fora do ar';
 $string['intervalminutes'] = 'Intervalo de verificação (minutos)';
 $string['intervalminutes_desc'] = 'Tempo mínimo entre ciclos de verificação. A tarefa agendada será controlada por este valor.';
 $string['lastcheck'] = 'Última verificação';
+$string['minute'] = '1 minuto';
+$string['minutes'] = '{$a} minutos';
 $string['modules'] = 'Módulos';
 $string['modules_desc'] = 'Descrição dos módulos';
 $string['nodata'] = 'Nenhum dado ainda';
@@ -37,4 +41,5 @@ $string['retentiondays'] = 'Retenção (dias)';
 $string['retentiondays_desc'] = 'Excluir registros agregados por hora mais antigos que este número de dias. Os logs brutos também são excluídos após cada agregação (mantendo apenas a hora atual para a próxima agregação).';
 $string['task_hourly_rollup'] = 'Agregação e limpeza horária do StatusBoard';
 $string['up'] = 'No ar';
-$string['uptime'] = 'Tempo em atividade';
+$string['statuspagedays'] = 'Dias na página de status';
+$string['statuspagedays_desc'] = 'Número de dias a serem mostrados na página de status (escolha entre 1 e 7).';

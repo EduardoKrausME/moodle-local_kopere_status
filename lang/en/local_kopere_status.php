@@ -22,10 +22,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['day'] = '1 day';
+$string['days'] = '{$a} days';
 $string['down'] = 'Down';
 $string['intervalminutes'] = 'Check interval (minutes)';
 $string['intervalminutes_desc'] = 'Minimum time between check cycles. The scheduled task will gate itself by this value.';
 $string['lastcheck'] = 'Last check';
+$string['minute'] = '1 minute';
+$string['minutes'] = '{$a} minutes';
 $string['modules'] = 'Modules';
 $string['modules_desc'] = 'Modules desc';
 $string['nodata'] = 'No data yet';
@@ -37,4 +41,5 @@ $string['retentiondays'] = 'Retention (days)';
 $string['retentiondays_desc'] = 'Delete per-hour rollup rows older than this many days. Raw logs are also purged after each rollup (keep only current hour for next aggregation).';
 $string['task_hourly_rollup'] = 'StatusBoard hourly rollup & cleanup';
 $string['up'] = 'Up';
-$string['uptime'] = 'Uptime';
+$string['statuspagedays'] = 'Status page days';
+$string['statuspagedays_desc'] = 'Number of days to display in the status page (choose from 1 to 7).';

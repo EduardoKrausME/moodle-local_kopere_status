@@ -31,48 +31,52 @@ use Exception;
  */
 class logs {
     /**
-     * Return the latest samples for 'http' and 'db'.
+     * Return the latest log
      *
-     * Rules:
-     * - "Freshness" threshold = 2 * intervalminutes.
-     * - If no recent sample exists (e.g., logs purged or service OFF), we synthesize a
-     *   "stale" sample with status=0 (DOWN) so the UI reflects downtime in absence of data.
-     *
-     * @return array
+     * @return array|false
      * @throws Exception
      */
-    private function last_samples() {
+    private function last_log() {
         global $DB;
 
-        // Get the most recent log.
-        $recs = $DB->get_records_sql(
-            "SELECT *
-                   FROM {local_kopere_status_log}
-               ORDER BY id DESC", [], 0, 1
-        );
-        $rec = $recs ? reset($recs) : null;
-
-        if ($rec) {
+        // Get the latest log.
+        $log = $DB->get_record_sql("SELECT * FROM {local_kopere_status_log} ORDER BY id DESC LIMIT 1");
+        if ($log) {
+            $timecreated = strtotime("{$log->year}-{$log->month}-{$log->day} {$log->hour}:{$log->minute}");
             return [
-                "id" => $rec->id,
-                "timecreated" => "{$rec->day}/{$rec->month}/{$rec->year} {$rec->hour}:{$rec->minute}",
-                "status" => $rec->status,
-                "latencyms" => $rec->latencyms,
-                "httpcode" => $rec->httpcode,
-                "fresh" => 1,
+                "id" => $log->id,
+                "timecreated" => userdate($timecreated),
+                "status" => $log->status,
+                "latencyms" => $log->latencyms,
+                "httpcode" => $log->httpcode,
                 "stale" => 1,
             ];
         } else {
-            return [
-                "id" => 0,
-                "timecreated" => userdate(time()),
-                "status" => 0,
-                "latencyms" => 0,
-                "httpcode" => "",
-                "fresh" => 0,
-                "stale" => 0,
-            ];
+            return false;
         }
+    }
+
+    /**
+     * Status modules
+     *
+     * @return array[]
+     * @throws Exception
+     */
+    protected function status_modules() {
+        global $SITE;
+        $statusmodules = [
+            ["name" => $SITE->fullname],
+        ];
+        $modules = get_config("local_kopere_status", "modules");
+        $lines = preg_split('/\r\n|\r|\n/', $modules);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (isset($line[3])) {
+                $statusmodules[] = ["name" => $line];
+            }
+        }
+
+        return $statusmodules;
     }
 
     /**
@@ -82,109 +86,79 @@ class logs {
      * @throws Exception
      */
     public function summary() {
-        $samples = $this->last_samples();
+        $log = $this->last_log();
 
         // Treat stale or missing data as DOWN to surface outages when no logs exist.
-        $httpok = ($samples["fresh"] == 1 && $samples["status"] == 1) ? 1 : 0;
-        $overall = $httpok ? "operational" : "down";
+        $overall = $log["status"] ? "operational" : "down";
 
+        $publictitle = get_config("local_kopere_status", "publictitle");
+        $pluginname = get_string("pluginname", "local_kopere_status");
         return [
+            "title" => isset($publictitle[3]) ? $publictitle : $pluginname,
             "overall" => $overall,
-            "components" => $httpok,
-            "samples" => $samples,
+            "overall_label" => get_string("overall_{$overall}", "local_kopere_status"),
+            "last_log" => $log,
+            "status" => $this->status(),
+            "statusmodules" => $this->status_modules(),
         ];
     }
 
     /**
-     * Build status context for status.mustache: overall, uptime24h and the last N hour bars.
+     * Build status context for status.mustache
      *
-     * - Uses local_kopere_status_hourly (year,month,day,hour,uptime int 0..100).
-     * - Missing hours are treated as 0% (DOWN) to reflect outage/offline windows.
-     * - Window size defaults to 120 hours (≈5 dias), adjustable via parameter.
-     *
-     * @param int $windowhours Number of trailing hours to display (default 120).
      * @return array
      * @throws Exception
      */
-    public function status(int $windowhours = 120): array {
+    protected function status(): array {
         global $DB;
 
-        // 1) Overall from current summary.
-        $summary = $this->summary();
-        $overall = $summary['overall'];
-        $overalllabel = get_string('overall_' . $overall, 'local_kopere_status');
-
-        // 2) Title and 24h uptime.
-        $title = (string)get_config('local_kopere_status', 'publictitle');
-        if ($title === '') {
-            $title = get_string('pluginname', 'local_kopere_status');
+        $statuspagedays = get_config("local_kopere_status", "statuspagedays");
+        if (!$statuspagedays) {
+            $statuspagedays = 5;
         }
+        $windowhours = $statuspagedays * 24;
 
-        // Compute last 24h mean uptime using hourly table (down if missing).
-        $hnow = (int)floor(time() / 3600) * 3600;
-        $last24 = [];
-        for ($i = 1; $i <= 24; $i++) {
-            $ts = $hnow - ($i * 3600);
-            $y = (int)gmdate('Y', $ts);
-            $m = (int)gmdate('n', $ts);
-            $d = (int)gmdate('j', $ts);
-            $h = (int)gmdate('G', $ts);
-
-            $where = ['year' => $y, 'month' => $m, 'day' => $d, 'hour' => $h];
-            $row = $DB->get_record('local_kopere_status_hourly', $where, 'uptime');
-            $last24[] = $row ? (int)$row->uptime : 0;
-        }
-        $uptime24 = null;
-        if (!empty($last24)) {
-            $uptime24 = round(array_sum($last24) / count($last24), 2);
-        }
-
-        // 3) Build hour bars for the desired window (default 120 hours)
+        // Build hour bars for the desired window (default 120 hours)
+        $hnow = floor(time() / 3600) * 3600;
         $windowhours = max(1, $windowhours);
         $hours = [];
         for ($i = $windowhours; $i >= 1; $i--) {
             $ts = $hnow - ($i * 3600);
-            $y = (int)gmdate('Y', $ts);
-            $m = (int)gmdate('n', $ts);
-            $d = (int)gmdate('j', $ts);
-            $h = (int)gmdate('G', $ts);
+            $y = date("Y", $ts);
+            $m = date("n", $ts);
+            $d = date("j", $ts);
+            $h = date("G", $ts);
 
-            $where = ['year' => $y, 'month' => $m, 'day' => $d, 'hour' => $h];
-            $row = $DB->get_record('local_kopere_status_hourly', $where, 'uptime');
+            $where = ["year" => $y, "month" => $m, "day" => $d, "hour" => $h];
+            $row = $DB->get_record("local_kopere_status_hourly", $where, "uptime");
 
-            $pct = $row ? (int)$row->uptime : 0;
+            $pct = $row ? $row->uptime : 0;
 
             // Map to color class (tweak thresholds to your taste).
             if ($row === false) {
-                // If you prefer to visualize "no data" explicitly, uncomment next line:
-                // $cls = 'nodata';
-                // But requirement says missing -> treated as DOWN.
-                $cls = 'down';
+                $cls = "down";
             } else if ($pct >= 99) {
-                $cls = 'ok';
+                $cls = "ok";
             } else if ($pct >= 95) {
-                $cls = 'good';
+                $cls = "good";
             } else if ($pct >= 80) {
-                $cls = 'warn';
+                $cls = "warn";
             } else if ($pct > 0) {
-                $cls = 'bad';
+                $cls = "bad";
             } else {
-                $cls = 'down';
+                $cls = "down";
             }
 
+            $timecreated = strtotime("{$y}-{$m}-{$d} {$h}:{$m}");
             $hours[] = [
-                'cls' => $cls,
-                'pct' => $pct,
-                'title' => sprintf('%04d-%02d-%02d %02d:00 — %d%%', $y, $m, $d, $h, $pct),
+                "cls" => $cls,
+                "pct" => $pct,
+                "timecreated" => userdate($timecreated),
             ];
         }
 
         return [
-            'title' => $title,
-            'overall' => $overall,
-            'overall_label' => $overalllabel,
-            'uptime24h' => $uptime24,
-            'hours' => $hours,
+            "hours" => $hours,
         ];
     }
 }

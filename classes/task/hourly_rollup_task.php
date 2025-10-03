@@ -58,10 +58,10 @@ class hourly_rollup_task extends scheduled_task {
         // Previous hour in UTC.
         $now = time();
         $hourstart = $now - ($now % 3600) - 3600; // Start of previous hour.
-        $y = gmdate("Y", $hourstart);
-        $mo = gmdate("n", $hourstart);
-        $d = gmdate("j", $hourstart);
-        $h = gmdate("G", $hourstart);
+        $y = date("Y", $hourstart);
+        $mo = date("n", $hourstart);
+        $d = date("j", $hourstart);
+        $h = date("G", $hourstart);
 
         // Aggregate logs for that hour.
         $sql = "SELECT
@@ -90,37 +90,44 @@ class hourly_rollup_task extends scheduled_task {
             $DB->update_record("local_kopere_status_hourly", $row);
         } else {
             $row = (object) [
-                "year" => $y,
-                "month" => $mo,
-                "day" => $d,
-                "hour" => $h,
-                "uptime" => $uptime,
+                "year" => $y, "month" => $mo, "day" => $d, "hour" => $h, "uptime" => $uptime,
             ];
             $DB->insert_record("local_kopere_status_hourly", $row);
         }
 
-        // Retention (days) – prune old logs and old rollups by day cutoff (UTC).
-        $retentiondays = get_config("local_kopere_status", "retentiondays");
-        if ($retentiondays <= 0) {
-            $retentiondays = 30;
+        // Checks if it is between 00 and 02.
+        $hora = date("H");
+        if ($hora >= 0 && $hora < 2) {
+            // Retention (days) – prune old logs and old rollups by day cutoff (UTC).
+            $retentiondays = get_config("local_kopere_status", "retentiondays");
+            if ($retentiondays <= 0) {
+                $retentiondays = 30;
+            }
+            $cut = strtotime("-{$retentiondays} days", $now);
+            $cy = date("Y", $cut);
+            $cmo = date("n", $cut);
+            $cd = date("j", $cut);
+
+            // Delete logs older than cutoff day (coarse, but cross-DB compatible).
+            $DB->delete_records_select(
+                "local_kopere_status_log", "(year < :cy1)
+              OR (year = :cy2 AND month < :cmo1)
+              OR (year = :cy3 AND month = :cmo2 AND day < :cd)",
+                ["cy1" => $cy, "cy2" => $cy, "cy3" => $cy, "cmo1" => $cmo, "cmo2" => $cmo, "cd" => $cd]
+            );
+
+            $retentiondays = $retentiondays * 10;
+            $cut = strtotime("-{$retentiondays} days", $now);
+            $cy = date("Y", $cut);
+            $cmo = date("n", $cut);
+            $cd = date("j", $cut);
+            // Delete hourly older than cutoff day too.
+            $DB->delete_records_select(
+                "local_kopere_status_hourly", "(year < :cy1)
+              OR (year = :cy2 AND month < :cmo1)
+              OR (year = :cy3 AND month = :cmo2 AND day < :cd)",
+                ["cy1" => $cy, "cy2" => $cy, "cy3" => $cy, "cmo1" => $cmo, "cmo2" => $cmo, "cd" => $cd]
+            );
         }
-        $cut = strtotime("-" . $retentiondays . " days", $now);
-        $cy = gmdate("Y", $cut);
-        $cmo = gmdate("n", $cut);
-        $cd = gmdate("j", $cut);
-
-        // Delete logs older than cutoff day (coarse, but cross-DB compatible).
-        $DB->delete_records_select("local_kopere_status_log",
-            "(year < :cy)
-              OR (year = :cy AND month < :cmo)
-              OR (year = :cy AND month = :cmo AND day < :cd)",
-            ["cy" => $cy, "cmo" => $cmo, "cd" => $cd]);
-
-        // Delete hourly older than cutoff day too.
-        $DB->delete_records_select("local_kopere_status_hourly",
-            "(year < :cy)
-              OR (year = :cy AND month < :cmo)
-              OR (year = :cy AND month = :cmo AND day < :cd)",
-            ["cy" => $cy, "cmo" => $cmo, "cd" => $cd]);
     }
 }

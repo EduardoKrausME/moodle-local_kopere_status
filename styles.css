@@ -1,141 +1,57 @@
-@charset "UTF-8";
-/* StatusBoard — minimal, bright (no dark) */
-.sb-container {
+#page-local-kopere_status-index .sb-container {
   max-width: 1100px;
   margin: 24px auto;
   padding: 16px;
 }
-
-.sb-header {
+#page-local-kopere_status-index .sb-container .sb-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
-
-.sb-title {
+#page-local-kopere_status-index .sb-container .sb-header .sb-title {
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
 }
-
-.sb-overall {
+#page-local-kopere_status-index .sb-container .sb-header .sb-overall {
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 0.9rem;
   font-weight: 600;
 }
-
-.sb-operational {
+#page-local-kopere_status-index .sb-container .sb-header .sb-overall.sb-operational {
   background: #e8f7ec;
   color: #1f7a38;
 }
-
-.sb-partial {
+#page-local-kopere_status-index .sb-container .sb-header .sb-overall.sb-partial {
   background: #fff5e6;
   color: #9a5b00;
 }
-
-.sb-down {
+#page-local-kopere_status-index .sb-container .sb-header .sb-overall.sb-down {
   background: #fee9ea;
   color: #a52126;
 }
-
-.sb-card {
-  border: 1px solid #e7e7e7;
-  border-radius: 12px;
-  padding: 14px;
-  background: #ffffff;
-}
-
-.sb-card-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.sb-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #d3d3d3;
-}
-
-.sb-dot.up {
-  background: #2ecc71;
-}
-
-.sb-dot.down {
-  background: #e74c3c;
-}
-
-.sb-metric {
-  margin: 6px 0 2px;
-  font-size: 1.2rem;
-}
-
-.sb-sub {
-  margin: 0 0 6px;
-  color: #666666;
-}
-
-.sb-msg {
-  margin: 0 0 6px;
-  color: #444444;
-}
-
-.sb-time {
-  margin: 0;
-  color: #888888;
-  font-size: 0.9rem;
-}
-
-.sb-foot {
-  margin-top: 16px;
-  text-align: right;
-}
-
-.sb-json {
-  font-size: 0.9rem;
-  color: #444444;
-  text-decoration: underline;
-}
-
-/* ===== Status card (hour-by-hour) ===== */
-.sb-card {
+#page-local-kopere_status-index .sb-card {
   border: 1px solid #e7e7e7;
   background: #ffffff;
   border-radius: 12px;
   padding: 14px;
   margin: 12px 0;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-  /* Paleta de estados (ajuste se quiser) */
-  /* 100–99% */
-  /* 98–95%  */
-  /* 94–80%  */
-  /* 79–1%   */
-  /* 0%      */
-  /* sem dado explícito */
-  /* Responsivo: barras um pouco mais estreitas em telas menores */
 }
-.sb-card .sb-card-head {
+#page-local-kopere_status-index .sb-card .sb-card-head {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
-.sb-card .sb-head-left {
+#page-local-kopere_status-index .sb-card .sb-head-left {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.sb-card .sb-head-right {
-  text-align: right;
-  min-width: 80px;
-}
-.sb-card .sb-stateicon {
+#page-local-kopere_status-index .sb-card .sb-stateicon {
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -143,78 +59,153 @@
   flex: 0 0 auto;
   position: relative;
 }
-.sb-card .sb-stateicon.operational {
+#page-local-kopere_status-index .sb-card .sb-stateicon.operational {
   background: #27ae60;
 }
-.sb-card .sb-stateicon.partial {
+#page-local-kopere_status-index .sb-card .sb-stateicon.partial {
   background: #f1c40f;
 }
-.sb-card .sb-stateicon.down {
+#page-local-kopere_status-index .sb-card .sb-stateicon.down {
   background: #e74c3c;
 }
-.sb-card .sb-titlewrap {
+#page-local-kopere_status-index .sb-card .sb-titlewrap {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
 }
-.sb-card .sb-servicename {
+#page-local-kopere_status-index .sb-card .sb-servicename {
   font-size: 1rem;
   font-weight: 600;
   color: #1f2937;
 }
-.sb-card .sb-servicestate {
+#page-local-kopere_status-index .sb-card .sb-servicestate {
   font-size: 0.85rem;
 }
-.sb-card .sb-servicestate.operational {
+#page-local-kopere_status-index .sb-card .sb-servicestate.operational {
   color: #27ae60;
 }
-.sb-card .sb-servicestate.partial {
+#page-local-kopere_status-index .sb-card .sb-servicestate.partial {
   color: #ad7a00;
 }
-.sb-card .sb-servicestate.down {
+#page-local-kopere_status-index .sb-card .sb-servicestate.down {
   color: #b3261e;
 }
-.sb-card .sb-uptimevalue {
-  font-weight: 700;
-  color: #111827;
-}
-.sb-card .sb-uptimelabel {
+#page-local-kopere_status-index .sb-card .sb-uptimelabel {
   font-size: 0.75rem;
   color: #6b7280;
   margin-top: -2px;
 }
-.sb-card .sb-hoursline {
+#page-local-kopere_status-index .sb-card .sb-hoursline {
   display: flex;
   gap: 2px;
 }
-.sb-card .sb-hourbar {
+#page-local-kopere_status-index .sb-card .sb-hourbar {
   display: inline-block;
   width: 100%;
   height: 22px;
   border-radius: 4px;
   background: #e5e7eb;
+  /* 100 or 99% */
 }
-.sb-card .sb-hourbar.ok {
+#page-local-kopere_status-index .sb-card .sb-hourbar.ok {
   background: #2ecc71;
 }
-.sb-card .sb-hourbar.good {
+#page-local-kopere_status-index .sb-card .sb-hourbar.good {
   background: #7bd98c;
 }
-.sb-card .sb-hourbar.warn {
+#page-local-kopere_status-index .sb-card .sb-hourbar.warn {
   background: #f1c40f;
 }
-.sb-card .sb-hourbar.bad {
+#page-local-kopere_status-index .sb-card .sb-hourbar.bad {
   background: #f39c12;
 }
-.sb-card .sb-hourbar.down {
+#page-local-kopere_status-index .sb-card .sb-hourbar.down {
   background: #e74c3c;
 }
-.sb-card .sb-hourbar.nodata {
-  background: #cdd5df;
-}
 @media (max-width: 680px) {
-  .sb-card .sb-hourbar {
+  #page-local-kopere_status-index .sb-card .sb-hourbar {
     width: 5px;
     height: 18px;
   }
+}
+#page-local-kopere_status-index .sb-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d3d3d3;
+}
+#page-local-kopere_status-index .sb-dot.up {
+  background: #2ecc71;
+}
+#page-local-kopere_status-index .sb-dot.down {
+  background: #e74c3c;
+}
+#page-local-kopere_status-index .sb-metric {
+  margin: 6px 0 2px;
+  font-size: 1.2rem;
+}
+#page-local-kopere_status-index .sb-metric .sb-sub {
+  margin: 0;
+  color: #666666;
+}
+#page-local-kopere_status-index .sb-metric .sb-time {
+  margin: 0;
+  color: #888888;
+  font-size: 0.9rem;
+}
+#page-local-kopere_status-index .hoursline-modal {
+  position: absolute;
+  display: none;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  padding: 6px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  z-index: 999;
+  font-size: 14px;
+  transform: translateX(-50%);
+  text-align: center;
+}
+#page-local-kopere_status-index .hoursline-modal .time {
+  display: block;
+  color: #666;
+  margin-bottom: 4px;
+}
+#page-local-kopere_status-index .hoursline-modal .pct {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  /* 100 or 99% */
+  /* 95 to 99% */
+  /* 80 to 95% */
+  /* 1 to 80% */
+  /* 0% */
+}
+#page-local-kopere_status-index .hoursline-modal .pct.ok {
+  background: #2ecc71;
+  color: #fff;
+  border-color: #27ae60;
+}
+#page-local-kopere_status-index .hoursline-modal .pct.good {
+  background: #7bd98c;
+  color: #1b5e20;
+  border-color: #43a047;
+}
+#page-local-kopere_status-index .hoursline-modal .pct.warn {
+  background: #f1c40f;
+  color: #7d6608;
+  border-color: #d4ac0d;
+}
+#page-local-kopere_status-index .hoursline-modal .pct.bad {
+  background: #f39c12;
+  color: #873600;
+  border-color: #d35400;
+}
+#page-local-kopere_status-index .hoursline-modal .pct.down {
+  background: #e74c3c;
+  color: #fff;
+  border-color: #c0392b;
 }

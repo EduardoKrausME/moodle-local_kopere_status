@@ -22,43 +22,20 @@
  * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// Public status page (no login).
+
 use local_kopere_status\local\logs;
 
 require(__DIR__ . "/../../config.php");
 
-$context = context_system::instance();
-$PAGE->set_context($context);
 $PAGE->set_url(new moodle_url("/local/kopere_status/index.php"));
 $PAGE->set_pagelayout("embedded");
 $PAGE->set_title(get_config("local_kopere_status", "publictitle") ?: get_string("pluginname", "local_kopere_status"));
 $PAGE->set_heading(get_config("local_kopere_status", "publictitle") ?: get_string("pluginname", "local_kopere_status"));
 
-$statusmodules = [
-    ["name" => $SITE->fullname],
-];
-$modules = get_config('local_kopere_status', 'modules');
-$lines = preg_split('/\r\n|\r|\n/', $modules);
-foreach ($lines as $line) {
-    $line = trim($line);
-    if (isset($line[3])) {
-        $statusmodules[] = ["name" => $line];
-    }
-}
-
 // Prepare template data.
 $c = new logs();
-$summary = $c->summary();
-$tpl = [
-    "title" => get_config("local_kopere_status", "publictitle") ?: get_string("pluginname", "local_kopere_status"),
-    "overall" => $summary["overall"],
-    "overall_label" => get_string("overall_" . $summary["overall"], "local_kopere_status"),
-    "http" => $summary["components"] ?? 0,
-    "sample_http" => $summary["samples"] ?? null,
-    "statusmodules" => $statusmodules,
-    "status" => $c->status(120),
-];
+$templatedata = $c->summary(); // 5 days.
 
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template("local_kopere_status/status", $tpl);
+echo $OUTPUT->render_from_template("local_kopere_status/status", $templatedata);
 echo $OUTPUT->footer();
