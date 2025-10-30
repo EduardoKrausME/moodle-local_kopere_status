@@ -118,7 +118,7 @@ class logs {
         }
         $windowhours = $statuspagedays * 24;
 
-        // Build hour bars for the desired window (default 120 hours)
+        // Build hour bars for the desired window (default 120 hours).
         $hnow = floor(time() / 3600) * 3600;
         $windowhours = max(1, $windowhours);
         $hours = [];

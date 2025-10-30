@@ -63,11 +63,6 @@ class ping_task extends scheduled_task {
         // Only act on minutes that are multiples of the interval.
         $now = time();
         mtrace(date('c', $now));
-        $currentminute = date("i", $now);
-        if ($interval > 1 && ($currentminute % $interval) !== 0) {
-            //mtrace("Ignored");
-            //return;
-        }
 
         // Build time components in UTC.
         $minute = date("i", $now);
