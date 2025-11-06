@@ -35,6 +35,7 @@ $string['modules_desc'] = 'Enter one module per line. Each line will be replicat
 $string['nodata'] = 'No data yet';
 $string['overall_operational'] = 'All systems operational';
 $string['pluginname'] = 'System Status';
+$string['publiclink'] = 'Public status page';
 $string['publictitle'] = 'Public title';
 $string['publictitle_desc'] = 'Title displayed on the public status page.';
 $string['retentiondays'] = 'Retention (days)';

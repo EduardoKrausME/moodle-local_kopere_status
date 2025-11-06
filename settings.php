@@ -28,6 +28,19 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage("local_kopere_status",
         get_string("pluginname", "local_kopere_status"));
 
+    $publicurl = new moodle_url("/local/kopere_status/");
+    $publiclink = get_string("publiclink", "local_kopere_status");
+    $ADMIN->add("localplugins", new admin_externalpage(
+        "local_kopere_status_public_1",
+        get_string("pluginname", "local_kopere_status")." - {$publiclink}",
+        $publicurl
+    ));
+
+    $html = "<p>{$publiclink}: <a target='_blank' href='{$publicurl->out(false)}'>{$publicurl->out(false)}</a></p>";
+    $settings->add(
+        new admin_setting_heading("local_kopere_status_public_2", "", $html)
+    );
+
     $choices = [
         1  => get_string("minute", "local_kopere_status"),
         2  => get_string("minutes", "local_kopere_status", 2),
