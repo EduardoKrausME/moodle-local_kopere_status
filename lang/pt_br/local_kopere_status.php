@@ -35,6 +35,7 @@ $string['modules_desc'] = 'Descrição dos módulos';
 $string['nodata'] = 'Nenhum dado ainda';
 $string['overall_down'] = 'Sistema indisponível';
 $string['overall_operational'] = 'Todos os sistemas operacionais';
+$string['privacy:metadata'] = 'O plugin Kopere Status não armazena nenhum dado pessoal.';
 $string['pluginname'] = 'Status do Sistema';
 $string['publictitle'] = 'Título público';
 $string['publictitle_desc'] = 'Título exibido na página pública de status.';

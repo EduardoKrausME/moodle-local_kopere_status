@@ -35,6 +35,7 @@ $string['modules_desc'] = 'Enter one module per line. Each line will be replicat
 $string['nodata'] = 'No data yet';
 $string['overall_down'] = 'System unavailable';
 $string['overall_operational'] = 'All systems operational';
+$string['privacy:metadata'] = 'The Kopere Status plugin does not store any personal data.';
 $string['pluginname'] = 'System Status';
 $string['publiclink'] = 'Public status page';
 $string['publictitle'] = 'Public title';
