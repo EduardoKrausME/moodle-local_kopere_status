@@ -33,6 +33,7 @@ $string['minutes'] = '{$a} minutos';
 $string['modules'] = 'Módulos';
 $string['modules_desc'] = 'Descrição dos módulos';
 $string['nodata'] = 'Nenhum dado ainda';
+$string['overall_down'] = 'Sistema indisponível';
 $string['overall_operational'] = 'Todos os sistemas operacionais';
 $string['pluginname'] = 'Status do Sistema';
 $string['publictitle'] = 'Título público';
