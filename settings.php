@@ -32,7 +32,7 @@ if ($hassiteconfig) {
     $publiclink = get_string("publiclink", "local_kopere_status");
     $ADMIN->add("localplugins", new admin_externalpage(
         "local_kopere_status_public_1",
-        get_string("pluginname", "local_kopere_status")." - {$publiclink}",
+        get_string("pluginname", "local_kopere_status") . " - {$publiclink}",
         $publicurl
     ));
 
