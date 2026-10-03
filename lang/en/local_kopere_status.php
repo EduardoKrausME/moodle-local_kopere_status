@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $string['day'] = '1 day';
 $string['days'] = '{$a} days';
 $string['down'] = 'Down';
