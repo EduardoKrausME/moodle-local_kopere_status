@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_kopere_status\local\logs;
+use local_kopere_status\logs;
 
 require(__DIR__ . "/../../config.php");
 
