@@ -24,8 +24,27 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['pluginname'] = 'Kopere Status';
-$string['up'] = 'Up';
+$string['day'] = '1 day';
+$string['days'] = '{$a} days';
 $string['down'] = 'Down';
+$string['intervalminutes'] = 'Check interval (minutes)';
+$string['intervalminutes_desc'] = 'Minimum time between check cycles. The scheduled task will gate itself by this value.';
 $string['lastcheck'] = 'Last check';
+$string['minute'] = '1 minute';
+$string['minutes'] = '{$a} minutes';
+$string['modules'] = 'Modules';
+$string['modules_desc'] = 'Enter one module per line. Each line will be replicated for the different statuses. E.g., if you enter "Enrollment" and "Support" (one per line), the statuses will be displayed only for "Enrollment" and for "Support".';
 $string['nodata'] = 'No data available';
+$string['overall_down'] = 'System unavailable';
+$string['overall_operational'] = 'All systems operational';
+$string['pluginname'] = 'Kopere Status';
+$string['privacy:metadata'] = 'The Kopere Status plugin does not store any personal data.';
+$string['publiclink'] = 'Public status page';
+$string['publictitle'] = 'Public title';
+$string['publictitle_desc'] = 'Title displayed on the public status page.';
+$string['retentiondays'] = 'Retention (days)';
+$string['retentiondays_desc'] = 'Delete per-hour rollup rows older than this many days. Raw logs are also purged after each rollup (keep only current hour for next aggregation).';
+$string['statuspagedays'] = 'Status page days';
+$string['statuspagedays_desc'] = 'Number of days to display in the status page (choose from 1 to 7).';
+$string['task_hourly_rollup'] = 'StatusBoard hourly rollup & cleanup';
+$string['up'] = 'Up';

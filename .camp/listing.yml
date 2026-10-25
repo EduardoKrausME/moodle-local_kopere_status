@@ -1,0 +1,23 @@
+# (RFC §4.1). Authors update their listing with an ordinary commit; camp
+# ingests and hash-pins it at each tagged release. Listing for local_kopere_status.
+
+name: "System Status"
+summary: "Monitor services, availability, and technical indicators in real time."
+description: |
+  Monitor services, availability, and technical indicators in real time.
+
+  Public status page for your Moodle: monitors availability, uptime, consecutive days, and history - with a public URL to share.
+
+  Key capabilities:
+  - Moodle availability monitoring (heartbeat/checks).
+  - Continuous uptime since the last outage.
+  - Consecutive days online (streak) for executive reporting.
+
+  Supported Moodle versions in the supplied plugin list: 4.1 - 5.0.
+
+labels:
+  - fully-free
+category: "reports"
+links:
+  docs: https://github.com/EduardoKrausME/moodle-local_kopere_status#readme
+  issues: https://github.com/EduardoKrausME/moodle-local_kopere_status/issues
